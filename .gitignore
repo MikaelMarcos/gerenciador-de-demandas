@@ -1,0 +1,8 @@
+# Root ignores
+backend/.env
+backend/venv/
+backend/__pycache__/
+backend/*.db
+backend/*.log
+frontend/node_modules/
+.DS_Store
