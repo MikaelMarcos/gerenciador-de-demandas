@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api', // Backend local URL
+  baseURL: import.meta.env.VITE_API_URL || 'https://gerenciador-de-demandas.onrender.com/api', // Backend production URL
   headers: {
     'Content-Type': 'application/json',
   },
