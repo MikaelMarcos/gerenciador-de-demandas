@@ -22,7 +22,7 @@ import { CheckCircle, Clock, UserCheck } from 'lucide-react';
 interface PendingUser extends User {} // Placeholder, assuming it's the same as User for now.
 
 export default function Users() {
-  const { user: currentUser } = useAuth();
+  useAuth();
   const { addToast } = useToast();
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [approvedUsers, setApprovedUsers] = useState<User[]>([]);

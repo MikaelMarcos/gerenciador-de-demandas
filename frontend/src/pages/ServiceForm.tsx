@@ -38,7 +38,7 @@ export default function ServiceForm() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [success] = useState(false);
 
   useEffect(() => {
     // Busca ativos e usuários aprovados

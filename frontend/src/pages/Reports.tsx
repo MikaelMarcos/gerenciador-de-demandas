@@ -130,7 +130,7 @@ export default function Reports() {
 
       // Preparando Tabela
       const tableColumn = ["Data", "Localidade", "Sistema", "Ativo", "Categoria", "Ocorrência", "Interf. Elét.", "Peças Substituídas"];
-      const tableRows = [];
+      const tableRows: any[] = [];
 
       data.forEach((svc: any) => {
         const rowData = [
