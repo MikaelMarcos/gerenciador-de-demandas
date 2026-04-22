@@ -5,7 +5,15 @@ from datetime import date
 from typing import List
 import database, models, schemas
 
-models.Base.metadata.create_all(bind=database.engine)
+import logging
+import traceback
+
+try:
+    models.Base.metadata.create_all(bind=database.engine)
+    print("--- DATABASE CONNECTED AND TABLES VERIFIED ---")
+except Exception as e:
+    print(f"--- ERROR CONNECTING TO DATABASE: {e} ---")
+    print("POSSIBLE CAUSE: Your Supabase free project might be paused due to inactivity, or the DATABASE_URL is incorrect.")
 
 app = FastAPI(title="Sistema NUIAM API", description="Gestão de Macromedição e Telemetria")
 
