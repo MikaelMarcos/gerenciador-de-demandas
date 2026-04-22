@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, PlusCircle, Network, FileDown, Users as UsersIcon, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, X, LayoutDashboard, PlusCircle, Network, FileDown, Users as UsersIcon, LogOut, User as UserIcon, BrainCircuit } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getIconComponent } from '../utils/icons';
 
@@ -21,6 +21,7 @@ export default function Layout() {
 
   if (user?.role === 'chefe' || user?.role === 'desenvolvedor') {
     menuItems.push({ path: '/users', name: 'Gestão de Usuários', icon: UsersIcon });
+    menuItems.push({ path: '/ml-data', name: 'Dataset / IA', icon: BrainCircuit });
   }
 
   // Todos tem acesso ao perfil
