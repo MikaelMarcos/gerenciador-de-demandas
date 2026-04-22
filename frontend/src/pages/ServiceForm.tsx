@@ -15,6 +15,7 @@ export default function ServiceForm() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [historicalSuggestions, setHistoricalSuggestions] = useState<string[]>([]);
+  const [pastServices, setPastServices] = useState<any[]>([]);
   
   // Estados para os Dropdowns Específicos
   const [naturalInfluenceSelect, setNaturalInfluenceSelect] = useState('');
@@ -68,10 +69,12 @@ export default function ServiceForm() {
              p.split(',').map(item => item.trim()).filter(Boolean).forEach(i => uniquePartsSet.add(i));
            });
            setHistoricalSuggestions(Array.from(uniquePartsSet));
+           setPastServices(history);
         })
         .catch(console.error);
     } else {
        setHistoricalSuggestions([]);
+       setPastServices([]);
     }
   }, [form.asset_id]);
 
@@ -143,6 +146,45 @@ export default function ServiceForm() {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {pastServices.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm animate-in fade-in slide-in-from-top-4">
+          <h3 className="text-slate-800 font-bold mb-3 flex items-center gap-2">
+            Histórico Recente de Vistorias neste Ativo
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-600 whitespace-nowrap">
+              <thead className="bg-slate-50 text-slate-700 text-xs uppercase font-semibold">
+                <tr>
+                  <th className="px-3 py-2">Data</th>
+                  <th className="px-3 py-2">Macro-Tipo</th>
+                  <th className="px-3 py-2">Categoria</th>
+                  <th className="px-3 py-2">Anotações</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {pastServices.slice(0, 5).map((sec, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50">
+                    <td className="px-3 py-2 font-medium">{sec.date}</td>
+                    <td className="px-3 py-2">
+                      <span className={`px-2 py-1 rounded-full text-[10px] uppercase font-bold tracking-wider ${sec.macro_type === 'Preventiva' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>
+                         {sec.macro_type}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">{sec.category}</td>
+                    <td className="px-3 py-2 max-w-[200px] truncate" title={sec.materials_used}>{sec.materials_used || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {pastServices.length > 5 && (
+            <div className="text-xs text-center text-slate-500 mt-2">
+              Mostrando 5 de {pastServices.length} registros.
+            </div>
+          )}
         </div>
       )}
 
