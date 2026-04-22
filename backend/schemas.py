@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import date
+from datetime import date as dt_date
 
 class UserBase(BaseModel):
     full_name: str
@@ -43,14 +43,14 @@ class ServiceBase(BaseModel):
 class ServiceCreate(ServiceBase):
     asset_id: int
     user_ids: List[int] = []
-    date: Optional[date] = None
+    date: Optional[dt_date] = None
 
 class ServiceUpdateDate(BaseModel):
-    date: date
+    date: dt_date
 
 class Service(ServiceBase):
     id: int
-    date: date
+    date: dt_date
     users: List[UserResponse] = []
 
     class Config:
@@ -69,7 +69,7 @@ class AssetCreate(AssetBase):
 class AssetResponse(AssetBase):
     id: int
     system_id: int
-    last_maintenance: date
+    last_maintenance: dt_date
     priority_score: int
     failure_reported: bool
     kanban_status: str
