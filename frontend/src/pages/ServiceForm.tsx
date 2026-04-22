@@ -27,6 +27,9 @@ export default function ServiceForm() {
   const [replacedPartsBool, setReplacedPartsBool] = useState('false');
   const [replacedPartsText, setReplacedPartsText] = useState('');
 
+  // ML Custom Questions
+  const [extraQuestions, setExtraQuestions] = useState<{question: string, answer: string}[]>([]);
+
   const [form, setForm] = useState({
     asset_id: initialAssetId,
     date: new Date().toISOString().split('T')[0],
@@ -86,6 +89,13 @@ export default function ServiceForm() {
     const finalNaturalInfluence = naturalInfluenceSelect === 'Outro' ? naturalInfluenceCustom : naturalInfluenceSelect;
     const finalPipingMaterial = pipingMaterialSelect === 'Outro' ? pipingMaterialCustom : pipingMaterialSelect;
 
+    // Formatar perguntas extras
+    let finalNotes = form.materials_used;
+    if (extraQuestions.length > 0) {
+      const qs = extraQuestions.map(q => `${q.question}: ${q.answer}`).join(' | ');
+      finalNotes = `[Checklist Customizado] ${qs}\n\n${finalNotes}`;
+    }
+
     setLoading(true);
     try {
       await api.post('/services', {
@@ -98,7 +108,7 @@ export default function ServiceForm() {
         diameter_mm: parseFloat(form.diameter_mm) || null,
         natural_influences: finalNaturalInfluence,
         electrical_interferences: form.electrical_interferences === 'true',
-        materials_used: form.materials_used,
+        materials_used: finalNotes,
         replaced_parts: replacedPartsBool === 'true' ? replacedPartsText : null,
         user_ids: selectedUserIds
       });
@@ -109,6 +119,7 @@ export default function ServiceForm() {
       setPipingMaterialCustom('');
       setReplacedPartsBool('false');
       setReplacedPartsText('');
+      setExtraQuestions([]);
       setSelectedUserIds([]);
       addToast('Serviço registrado com sucesso! O checklist foi salvo no histórico do ativo.', 'success');
       navigate('/assets');
@@ -407,13 +418,44 @@ export default function ServiceForm() {
               )}
           </div>
 
+          <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+             <div className="flex items-center justify-between mb-3">
+               <label className="block text-sm font-semibold text-slate-800">Perguntas Extras Padrões (Treinamento da IA)</label>
+               <button type="button" onClick={() => setExtraQuestions([...extraQuestions, {question: '', answer: ''}])} className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-md font-bold hover:bg-indigo-200 transition">
+                 + Adicionar Pergunta
+               </button>
+             </div>
+             
+             {extraQuestions.map((eq, idx) => (
+                <div key={idx} className="flex gap-2 mb-2 animate-in fade-in slide-in-from-top-1">
+                   <input type="text" placeholder="Pergunta (Ex: Qual pressão local?)" value={eq.question} onChange={e => {
+                       const newQs = [...extraQuestions];
+                       newQs[idx].question = e.target.value;
+                       setExtraQuestions(newQs);
+                   }} className="w-1/2 px-3 py-2 bg-white border border-slate-300 rounded focus:ring-2 focus:ring-primary-500 text-sm outline-none" required />
+                   
+                   <input type="text" placeholder="Resposta" value={eq.answer} onChange={e => {
+                       const newQs = [...extraQuestions];
+                       newQs[idx].answer = e.target.value;
+                       setExtraQuestions(newQs);
+                   }} className="w-1/2 px-3 py-2 bg-white border border-slate-300 rounded focus:ring-2 focus:ring-primary-500 text-sm outline-none" required />
+
+                   <button type="button" onClick={() => {
+                        const newQs = extraQuestions.filter((_, i) => i !== idx);
+                        setExtraQuestions(newQs);
+                   }} className="text-slate-400 hover:text-red-600 px-2 font-bold transition">X</button>
+                </div>
+             ))}
+             {extraQuestions.length === 0 && <p className="text-xs text-slate-500 italic mt-2">Adicione perguntas que se repetem com frequência. Isso estruturará a base de dados para a IA aprender padrões mais precisos.</p>}
+          </div>
+
           <div>
              <label className="block text-sm font-medium text-slate-700 mb-1">Outras Anotações Extras (Opcional)</label>
              <textarea 
                 value={form.materials_used}
                 onChange={e => setForm({...form, materials_used: e.target.value})}
                 className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none h-24"
-                placeholder="Detalhe os reparos, limpezas..."
+                placeholder="Detalhe os reparos abertos, limpezas extras..."
               />
           </div>
 
